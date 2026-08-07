@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Flecha geométrica de Find my team">
+  <rect width="512" height="512" rx="112" fill="#3E4957"/>
+
+  <!-- Halo secundario -->
+  <path
+    d="M256 72 414 230h-82v176H180V230H98L256 72Z"
+    fill="none"
+    stroke="#3892FF"
+    stroke-width="22"
+    stroke-linejoin="miter"
+  />
+
+  <!-- Flecha modular, inspirada en la geometría de bloques del festival -->
+  <path fill="#BDFF78" fill-rule="evenodd" d="
+    M256 86 396 226h-76v42h-42V184h16l-38-38-38 38h18v42h-60l80-80V86Z
+
+    M176 240h102v42h-60v40h60v42H176V240Z
+
+    M292 282h28v110h-42v-68h-28v-42h42Z
+
+    M194 378h84v42H152V294h42v84Z
+  "/>
+
+  <!-- Cortes internos azules para reforzar el efecto laberinto -->
+  <path d="M236 226h84M218 322h60M194 378h84" fill="none" stroke="#3892FF" stroke-width="12"/>
+  <rect x="250" y="184" width="28" height="42" fill="#3E4957"/>
+</svg>
