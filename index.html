@@ -232,6 +232,27 @@
         }
 
         .marca-persona .avatar { width: 39px; height: 39px; border: 3px solid #11141a; }
+
+        .flecha-orientacion {
+            position: absolute;
+            top: -26px;
+            left: 50%;
+            width: 20px;
+            height: 28px;
+            transform: translateX(-50%) rotate(0deg);
+            transform-origin: 50% 40px;
+            transition: transform .16s linear;
+            filter: drop-shadow(0 0 7px rgba(189,255,120,.55));
+            pointer-events: none;
+        }
+
+        .flecha-orientacion::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--verde);
+            clip-path: polygon(50% 0, 100% 72%, 63% 61%, 50% 100%, 37% 61%, 0 72%);
+        }
         .marca-persona span:last-child {
             margin-top: 4px;
             padding: 3px 7px;
@@ -516,6 +537,7 @@
                 </svg>
 
                 <div id="marcaYo" class="marca-persona">
+                    <span id="flechaOrientacion" class="flecha-orientacion" aria-hidden="true"></span>
                     <span id="avatarYoMapa" class="avatar">YO</span>
                     <span id="nicknameMapa">Tú</span>
                 </div>
@@ -620,6 +642,7 @@
         const botonRuta = $("botonRuta");
         const puntoReunion = $("puntoReunion");
         const toast = $("toast");
+        const flechaOrientacion = $("flechaOrientacion");
 
         let seguimientoActivo = false;
         let idSeguimientoUbicacion = null;
@@ -711,6 +734,7 @@
             }
             estado.textContent = "Buscando tu ubicación...";
             iniciarSeguimiento();
+            activarBrujulaReal();
         }
 
         function iniciarSeguimiento() {
@@ -785,6 +809,7 @@
             if (orientacion === null) return;
             sensorBrujulaActivo = true;
             orientacionTelefono = normalizarAngulo(orientacion);
+            actualizarFlechaOrientacion();
             actualizarDatosAmigo();
         }
 
@@ -860,8 +885,14 @@
         function girarTelefono(grados) {
             sensorBrujulaActivo = false;
             orientacionTelefono = normalizarAngulo(orientacionTelefono + grados);
+            actualizarFlechaOrientacion();
             mensajeMovimiento.textContent = `Orientación simulada: ${Math.round(orientacionTelefono)}°`;
             actualizarDatosAmigo();
+        }
+
+        function actualizarFlechaOrientacion() {
+            flechaOrientacion.style.transform = `translateX(-50%) rotate(${orientacionTelefono}deg)`;
+            flechaOrientacion.setAttribute("title", `Dirección del teléfono: ${Math.round(orientacionTelefono)}°`);
         }
 
         function reiniciarAmigo() {
