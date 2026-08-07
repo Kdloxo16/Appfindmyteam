@@ -650,6 +650,8 @@
         let miUbicacion = null;
         let rumboAmigo = 0;
         let orientacionTelefono = 0;
+        let orientacionSuavizada = null;
+        let ultimaLecturaBrujula = 0;
         let sensorBrujulaActivo = false;
         let ubicacionReunion = null;
         let temporizadorToast = null;
@@ -800,6 +802,10 @@
         }
 
         function manejarOrientacion(evento) {
+            const ahora = performance.now();
+            if (ahora - ultimaLecturaBrujula < 60) return;
+            ultimaLecturaBrujula = ahora;
+
             let orientacion = null;
             if (typeof evento.webkitCompassHeading === "number") {
                 orientacion = evento.webkitCompassHeading;
@@ -808,9 +814,16 @@
             }
             if (orientacion === null) return;
             sensorBrujulaActivo = true;
-            orientacionTelefono = normalizarAngulo(orientacion);
+            const lectura = normalizarAngulo(orientacion);
+            if (orientacionSuavizada === null) {
+                orientacionSuavizada = lectura;
+            } else {
+                const diferencia = ((lectura - orientacionSuavizada + 540) % 360) - 180;
+                if (Math.abs(diferencia) < 1.2) return;
+                orientacionSuavizada = normalizarAngulo(orientacionSuavizada + diferencia * .18);
+            }
+            orientacionTelefono = orientacionSuavizada;
             actualizarFlechaOrientacion();
-            actualizarDatosAmigo();
         }
 
         function crearAmigosIniciales() {
@@ -885,9 +898,9 @@
         function girarTelefono(grados) {
             sensorBrujulaActivo = false;
             orientacionTelefono = normalizarAngulo(orientacionTelefono + grados);
+            orientacionSuavizada = orientacionTelefono;
             actualizarFlechaOrientacion();
             mensajeMovimiento.textContent = `Orientación simulada: ${Math.round(orientacionTelefono)}°`;
-            actualizarDatosAmigo();
         }
 
         function actualizarFlechaOrientacion() {
@@ -923,11 +936,10 @@
                 miUbicacion.latitud, miUbicacion.longitud,
                 amigo.latitud, amigo.longitud
             );
-            const anguloRelativo = normalizarAngulo(rumboAmigo - orientacionTelefono);
             distanciaAmigo.textContent = formatearDistancia(distancia);
             direccionAmigo.textContent = `${obtenerDireccion(rumboAmigo)} · ${Math.round(rumboAmigo)}°`;
             if (rutaActiva) {
-                actualizarRuta(anguloRelativo, distancia);
+                actualizarRuta(rumboAmigo, distancia);
                 rutaSvg.classList.add("visible");
             } else {
                 rutaSvg.classList.remove("visible");
@@ -955,8 +967,7 @@
                     miUbicacion.latitud, miUbicacion.longitud,
                     amigo.latitud, amigo.longitud
                 );
-                const angulo = normalizarAngulo(rumbo - orientacionTelefono);
-                const posicion = calcularPosicionVisual(angulo, distancia);
+                const posicion = calcularPosicionVisual(rumbo, distancia);
                 const marcador = $(`marca-${id}`);
                 marcador.style.left = `${posicion.destinoX / 3.6}%`;
                 marcador.style.top = `${posicion.destinoY / 2.4}%`;

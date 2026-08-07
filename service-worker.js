@@ -1,4 +1,4 @@
-const CACHE_NAME = "find-my-team-v8";
+const CACHE_NAME = "find-my-team-v9";
 const ARCHIVOS = [
     "./",
     "./index.html",
