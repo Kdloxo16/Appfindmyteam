@@ -240,8 +240,8 @@
             width: 20px;
             height: 28px;
             transform: translateX(-50%) rotate(0deg);
-            transform-origin: 50% 40px;
-            transition: transform .16s linear;
+            transform-origin: 50% 50%;
+            transition: transform .28s ease-out;
             filter: drop-shadow(0 0 7px rgba(189,255,120,.55));
             pointer-events: none;
         }
@@ -803,7 +803,7 @@
 
         function manejarOrientacion(evento) {
             const ahora = performance.now();
-            if (ahora - ultimaLecturaBrujula < 60) return;
+            if (ahora - ultimaLecturaBrujula < 100) return;
             ultimaLecturaBrujula = ahora;
 
             let orientacion = null;
@@ -819,8 +819,8 @@
                 orientacionSuavizada = lectura;
             } else {
                 const diferencia = ((lectura - orientacionSuavizada + 540) % 360) - 180;
-                if (Math.abs(diferencia) < 1.2) return;
-                orientacionSuavizada = normalizarAngulo(orientacionSuavizada + diferencia * .18);
+                if (Math.abs(diferencia) < 3) return;
+                orientacionSuavizada = normalizarAngulo(orientacionSuavizada + diferencia * .10);
             }
             orientacionTelefono = orientacionSuavizada;
             actualizarFlechaOrientacion();
